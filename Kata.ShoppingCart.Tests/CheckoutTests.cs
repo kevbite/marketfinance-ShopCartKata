@@ -1,73 +1,83 @@
 using System;
+using System.Collections.Generic;
 using FluentAssertions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.VisualStudio.TestPlatform.Common.Utilities;
+using Xunit;
 
-namespace Kata.ShoppingCart.Tests
+namespace Kata.ShoppingCart.Tests.XUnit
 {
-    [TestClass]
+
+    /*
+     * Item	Price	Offer
+A	50	3 for 130
+B	30	2 for 45
+C	20
+D	15
+     */
     public class CheckoutTests
     {
-        private readonly Checkout _sut = new Checkout();
+        private readonly Checkout _checkout;
 
-        [TestMethod]
-        public void Checkout_GetTotal_WhenCalled_ShouldNotThrow()
+        public CheckoutTests()
         {
-            Action act = () => _sut.GetTotal("A");
-            act.Should().NotThrow();
+            _checkout = new Checkout(new Dictionary<char, int>
+            {
+                ['A'] = 50,
+                ['B'] = 30,
+                ['C'] = 20,
+                ['D'] = 15
+            }, new Dictionary<char, IOffers>
+            {
+                ['A'] = new Offers(130, 3),
+                ['B'] = new Offers(45, 2)
+            });
+        }
+        [Fact]
+        public void ShouldReturnZeroForScannedItems()
+        {
+            var total = _checkout.GetTotal("");
+            total.Should().Be(0);
         }
 
-        [TestMethod]
-        public void Checkout_GetTotal_WhenCalledWithNullItem_ShouldReturnZero()
+        [Theory]
+        [InlineData("A", 50)]
+        [InlineData("B", 30)]
+        [InlineData("C", 20)]
+        [InlineData("D", 15)]
+        public void ShouldReturnItemPriceWhenScannedOnce(string itemCode, int price)
         {
-            _sut.GetTotal(null).Should().Be(0);
+            var total = _checkout.GetTotal(itemCode);
+            total.Should().Be(price);
         }
 
-        [TestMethod]
-        public void Checkout_GetTotal_WhenCalledWithNoItem_ShouldReturnZero()
+        [Theory]
+        [InlineData("AA", 100)]
+        [InlineData("CC", 40)]
+        [InlineData("DD", 30)]
+        [InlineData("ABCD", 115)]
+        public void ShouldReturnCorrectPricesForMultipleItems(string itemCode, int price)
         {
-            _sut.GetTotal("").Should().Be(0);
+            var total = _checkout.GetTotal(itemCode);
+            total.Should().Be(price);
         }
 
-        [DataTestMethod]
-        [DataRow("A", 50)]
-        [DataRow("B", 30)]
-        [DataRow("C", 20)]
-        [DataRow("D", 15)]
-        public void Checkout_GetTotal_WhenCalledWithOneItem_ShouldReturnSingleItemPrice(string item, double price)
+        [Theory]
+        [InlineData("AAA", 130)]
+        [InlineData("BB", 45)]
+        public void ShouldReturnCorrectPriceForSpecialOffer(string itemCodes, int totalPrice)
         {
-            _sut.GetTotal(item).Should().Be(price);
+            var total = _checkout.GetTotal(itemCodes);
+            total.Should().Be(totalPrice);
         }
 
-        [DataTestMethod]
-        [DataRow("ABCD", 115)]
-        [DataRow("AABCD", 165)]
-        [DataRow("ABCCD", 135)]
-        [DataRow("ABCDD", 130)]
-        [DataRow("CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC", 2000)]
-        public void Checkout_GetTotal_WhenCalledWithMultipleItems_ShouldReturnTotalPrice(string item, double price)
+        [Theory]
+        [InlineData("AAABB", 175)]
+        [InlineData("BBBB", 90)]
+        [InlineData("DAAAD", 160)]
+        public void ShouldReturnCorrectPriceForSpecialOfferAndSingleItems(string itemCodes, int totalPrice)
         {
-            _sut.GetTotal(item).Should().Be(price);
-        }
-
-        [DataTestMethod]
-        [DataRow("AAA", 130)]
-        [DataRow("AAAAAA", 260)]
-        [DataRow("BB", 45)]
-        [DataRow("BBBB", 90)]
-        [DataRow("AAABB", 175)]
-        [DataRow("BAAAB", 175)]
-        [DataRow("BACADAB", 210)]
-        public void Checkout_GetTotal_WhenCalledWithWithDiscountedItems_ShouldDiscountAllItems(string item, double price)
-        {
-            _sut.GetTotal(item).Should().Be(price);
-        }
-
-        [DataTestMethod]
-        [DataRow("AAAAA", 230)]
-        [DataRow("BBB", 75)]
-        public void Checkout_GetTotal_WhenCalledWithWithMoreThanRequiredForDiscount_ShouldNotDiscountAdditionalItems(string item, double price)
-        {
-            _sut.GetTotal(item).Should().Be(price);
+            var total = _checkout.GetTotal(itemCodes);
+            total.Should().Be(totalPrice);
         }
     }
 }

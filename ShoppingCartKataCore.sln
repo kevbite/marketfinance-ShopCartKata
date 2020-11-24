@@ -4,11 +4,7 @@ VisualStudioVersion = 16.0.30225.117
 MinimumVisualStudioVersion = 15.0.26124.0
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kata.ShoppingCart", "Kata.ShoppingCart\Kata.ShoppingCart.csproj", "{CACE8BF4-5883-4851-AFA3-86167A30DD2E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kata.ShoppingCart.Tests.MSTest", "Kata.ShoppingCart.Tests.MSTest\Kata.ShoppingCart.Tests.MSTest.csproj", "{B365572F-D74E-4C4A-AE99-764C93F072C4}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kata.ShoppingCart.Tests.NUnit", "Kata.ShoppingCart.Tests.NUnit\Kata.ShoppingCart.Tests.NUnit.csproj", "{2CE3C5D5-6291-4EE1-8E9B-8AF54786661F}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kata.ShoppingCart.Tests.XUnit", "Kata.ShoppingCart.Tests.XUnit\Kata.ShoppingCart.Tests.XUnit.csproj", "{4FB3E7B2-47D0-4564-8154-1E13C518A9E9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kata.ShoppingCart.Tests", "Kata.ShoppingCart.Tests\Kata.ShoppingCart.Tests.csproj", "{4FB3E7B2-47D0-4564-8154-1E13C518A9E9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
